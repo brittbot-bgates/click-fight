@@ -30,6 +30,10 @@ function increasePlayerHealth(healValue) {
   playerHealthBar.value = +playerHealthBar.value + healValue;
 }
 
+function increaseOpponentHealth(healValue) {
+  opponentHealthBar.value = +opponentHealthBar.value + healValue;
+}
+
 function resetGame(value) {
   playerHealthBar.value = value;
   opponentHealthBar.value = value;

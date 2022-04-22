@@ -3,7 +3,7 @@ const PLAYER_STRONG_ATTACK = 20;
 const OPPONENT_NORMAL_ATTACK = 10;
 const OPPONENT_STRONG_ATTACK = 20;
 const PLAYER_HEAL_VALUE = 20;
-const OPPONENT_HEAL_VALUE = 20; // will be used in future version
+const OPPONENT_HEAL_VALUE = 20;
 const PLAYER_NORMAL_MODE_ATTACK = "ATTACK";
 const PLAYER_STRONG_MODE_STRONG_ATTACK = "STRONG_ATTACK";
 const OPPONENT_NORMAL_MODE_ATTACK = "ATTACK";
@@ -13,7 +13,7 @@ const LOG_EVENT_PLAYER_STRONG_ATTACK = "PLAYER_STRONG_ATTACK";
 const LOG_EVENT_OPPONENT_NORMAL_ATTACK = "OPPONENT_NORMAL_ATTACK";
 const LOG_EVENT_OPPONENT_STRONG_ATTACK = "OPPONENT_STRONG_ATTACK";
 const LOG_EVENT_PLAYER_HEAL = "PLAYER_HEAL";
-const LOG_EVENT_OPPONENT_HEAL = "OPPONENT_HEAL"; // will be used in future version
+const LOG_EVENT_OPPONENT_HEAL = "OPPONENT_HEAL";
 const LOG_EVENT_GAME_OVER = "GAME_OVER";
 
 let startingPlayerHealth = 100;
@@ -104,6 +104,8 @@ function fight(attackMode) {
   currentPlayerHealth -= damageToPlayer;
   fightLog(opponentLogEvent, damageToPlayer, currentOpponentHealth, currentPlayerHealth);
   fightResults();
+
+  healOpponent();
 }
 
 function fightResults() {
@@ -135,6 +137,21 @@ function fightResults() {
   }
 }
 
+function healOpponent() {
+  let opponentHealValue;
+  let randomNum = Math.floor(Math.random() * 4);
+
+  if (randomNum === 3 && currentOpponentHealth >= startingOpponentHealth - OPPONENT_HEAL_VALUE) {
+    opponentHealValue = startingOpponentHealth - currentOpponentHealth;
+  } else if (randomNum === 3) {
+    opponentHealValue = OPPONENT_HEAL_VALUE;
+    increaseOpponentHealth(OPPONENT_HEAL_VALUE);
+    currentOpponentHealth += OPPONENT_HEAL_VALUE;
+    fightLog(LOG_EVENT_OPPONENT_HEAL, opponentHealValue, currentOpponentHealth, currentPlayerHealth);
+    fightResults();
+  }
+}
+
 function newGame() {
   startingPlayerHealth = 100;
   startingOpponentHealth = 100;
@@ -150,38 +167,23 @@ function strongAttackHandler() {
 }
 
 function healPlayerHandler() {
-  let healValue;
+  let playerHealValue;
+
   if (currentPlayerHealth >= startingPlayerHealth - PLAYER_HEAL_VALUE) {
     alert("You can't heal more than max initial health.");
-    healValue = startingPlayerHealth - currentPlayerHealth;
+    playerHealValue = startingPlayerHealth - currentPlayerHealth;
   } else {
-    healValue = PLAYER_HEAL_VALUE;
+    playerHealValue = PLAYER_HEAL_VALUE;
   }
+
   increasePlayerHealth(PLAYER_HEAL_VALUE);
   currentPlayerHealth += PLAYER_HEAL_VALUE;
-  fightLog(LOG_EVENT_PLAYER_HEAL, healValue, currentOpponentHealth, currentPlayerHealth);
+  fightLog(LOG_EVENT_PLAYER_HEAL, playerHealValue, currentOpponentHealth, currentPlayerHealth);
   fightResults();
 }
 
 function printLogHandler() {
-  // I like this log better
   console.log(battleLog);
-
-  // This loop prints out the log one attack at a time
-  // let i = 0;
-  // for (const entry of battleLog) {
-  //   if (!battleLogLastEntry && battleLogLastEntry !== 0 || battleLogLastEntry < i) {
-  //     console.log(`#${i}`);
-  //     for (const key in entry) {
-  //       console.log(key);
-  //       console.log(`${key} => ${entry[key]}`);
-  //     }
-  //     console.log("----------");
-  //     battleLogLastEntry = i;
-  //     break;
-  //   }
-  //   i++;
-  // }
 }
 
 attackBtn.addEventListener("click", attackHandler);
